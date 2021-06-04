@@ -1,11 +1,11 @@
-const CONSTS = {
-  YEAR: 0,
-  MONTH: 1,
-  DATE: 2,
-  HOURS: 3,
-  MINUTES: 4,
-  SECONDS: 5,
-  MILLISECONDS: 6
+enum PARAM {
+  YEAR = 0,
+  MONTH = 1,
+  DATE = 2,
+  HOURS = 3,
+  MINUTES = 4,
+  SECONDS = 5,
+  MILLISECONDS = 6
 }
 
 const locale = window.localStorage.getItem('locale');
@@ -16,7 +16,20 @@ const MONTHNAMES = locale === 'es'
   ? ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
   : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-export class Calendar {
+/**
+ * ABCD
+ * @class
+ * @classdesc Calendar functionalities.
+ */
+class Calendar {
+  static YEAR: PARAM = PARAM.YEAR;
+  static MONTH: PARAM = PARAM.MONTH;
+  static DATE: PARAM = PARAM.DATE;
+  static HOURS: PARAM = PARAM.HOURS;
+  static MINUTES: PARAM = PARAM.MINUTES;
+  static SECONDS: PARAM = PARAM.SECONDS;
+  static MILLISECONDS: PARAM = PARAM.MILLISECONDS;
+
   year: number;
   month: number;
   date: number;
@@ -26,7 +39,17 @@ export class Calendar {
   milliseconds: number;
   localDate: Date;
 
-  constructor(year = 1, month = 1, date = 1, hours = 0, minutes = 0, seconds = 0, milliseconds = 0) {
+  /**
+   * Creates a Calendar instance with the provided parameters.
+   * @param  {number} year=1 Calendar Year
+   * @param  {number} month=1 Calendar month of the year
+   * @param  {number} date=1 Calenadar date of the month
+   * @param  {number} hours=0 Calendar hours of the date
+   * @param  {number} minutes=0 Calendar minutes of the hour
+   * @param  {number} seconds=0 Calendar seconds of the minute
+   * @param  {number} milliseconds=0 Calendar milliseconds of the second
+   */
+  constructor(year: number = 1, month: number = 1, date: number = 1, hours: number = 0, minutes: number = 0, seconds: number = 0, milliseconds: number = 0) {
     this.year = year;
     this.month = month;
     this.date = date;
@@ -37,23 +60,99 @@ export class Calendar {
     this.localDate = Calendar.getLocalDate(this.toISOString().substring(0, 23));
   }
 
-  getTime() {
+  /**
+   * Creates a Calendar instance from current Date
+   * @returns Calendar instance
+   */
+  static getInstance = (): Calendar => {
+    return Calendar.parse(Calendar.getLocalDate().toISOString());
+  }
+
+  /**
+   * Creates a Calendar instance from current date and the specified time parameters
+   * @param  {} hours=0 Hours of the current date
+   * @param  {} minutes=0 Minutes of the hour
+   * @param  {} seconds=0 Seconds of the minute
+   * @param  {} milliseconds=0 Milliseconds of the second
+   * @returns Calendar instance
+   */
+  static calendarAt = (hours = 0, minutes = 0, seconds = 0, milliseconds = 0): Calendar => {
+    const [year = '1', month = '1', date = '1'] = Calendar.getLocalDate().toISOString().split(/[^0-9]/);
+    return new Calendar(parseInt(year), parseInt(month), parseInt(date), hours, minutes, seconds, milliseconds);
+  }
+
+  /**
+   * Parses the stringDate parameter format ISO-8601 like into a Calendar instance
+   * @param  {string} strDate? the String date to parse
+   * @returns Calendar instance
+   */
+  static parse = (strDate: string): Calendar => {
+    const [year = '1', month = '1', date = '1', hours = '0', minutes = '0', seconds = '0', milliseconds = '0'] = strDate.split(/[^0-9]/);
+    return new Calendar(parseInt(year), parseInt(month), parseInt(date), parseInt(hours), parseInt(minutes), parseInt(seconds), parseInt(milliseconds));
+  }
+
+  /**
+   * Converts the current date paremeter into a javascript Date instance
+   * @param  {number|string} date? millisencods date o string javascript Date, if undefined current Date is assigned
+   * @returns Date the javascript Date instance
+   */
+  static getLocalDate = (date?: number | string): Date => {
+    const today = date ? new Date(date) : new Date();
+    const less = today.toString().indexOf('GMT-') > -1;
+    return new Date(today.getTime() + (today.getTimezoneOffset() * 60 * 1000 * (less ? -1 : 1)));
+  }
+
+  /**
+   * Get the current Calendar instance time in milliseconds
+   * @returns number Milliseconds
+   */
+  getTime(): number {
     return this.localDate.getTime();
   }
 
-  isLeap() {
+  /**
+   * Checks if the current Calendar instance corresponds whit a leap year
+   * @returns boolean if the current Calendar instance is a leap year
+   */
+  isLeap(): boolean {
     return (this.year % 4 === 0) && ((this.year % 100 !== 0) || (this.year % 400 === 0));
   }
 
-  toISOString() {
+
+  /**
+   * Converts the current Calendar instance to ISO-8601 String format yyyy-MM-ddTHH:mm:ss.SSSZ
+   * @returns string formated date
+   */
+  toISOString(): string {
     return `${this.dateString()}T${this.time()}Z`;
   };
 
-  dateString() {
+  /**
+   * Converts the current Calendar instance to String format yyyy-MM-dd
+   * @returns string formated date
+   */
+  dateString(): string {
     return this.format();
   }
 
-  format(format = 'yyyy-MM-dd') {
+  /**
+   * Converts the current Calendar instance to String specified format
+   * Pattern          | Component     | Examples
+   * ---------------- | ------------- | ---------------------------------
+   * yy\|yyyy         | Year          | yy=21, yyyy=2021
+   * M\|MM\|MMM\|MMMM | Month         | M=6, MM=06, MMM=Jun, MMMM=June
+   * d\|dd\|ddd\|dddd | Date          | d=1, dd=01, ddd=Sun, dddd=Sunday
+   * h\|hh\|H\|HH     | Hours         | h=1, hh=1, H=13, HH=13 for 13 Hrs
+   * a\|aa            | am/pm marker  | a=P, aa=PM for 13 Hrs
+   * m\|mm            | Minutes       | m=1, mm=01
+   * s\|ss            | Seconds       | s=1, ss=01
+   * S\|SSS           | Milliseconds  | S=1, SSS=001
+   * other            | Literal       | T=T, Z=Z, -=-
+   *
+   * @param  {string} format='yyyy-MM-dd' pattern definition
+   * @returns string
+   */
+  format(format: string = 'yyyy-MM-dd'): string {
     let dateString = '';
     const parts = format.match(/(.)\1*/g);
     parts && parts.length && parts.forEach(part => {
@@ -70,23 +169,23 @@ export class Calendar {
         case 'MM':
           dateString += ('00' + this.month).slice(-2);
           break;
+        case 'MMM':
+          dateString += this.monthName().substring(0, 3);
+          break;
+        case 'MMMM':
+          dateString += this.monthName();
+          break;
         case 'd':
           dateString += this.date;
           break;
         case 'dd':
           dateString += ('00' + this.date).slice(-2);
           break;
-        case 'D':
-          dateString += this.dayName();
-          break;
-        case 'DDD':
+        case 'ddd':
           dateString += this.dayName().substring(0, 3);
           break;
-        case 'M':
-          dateString += this.monthName();
-          break;
-        case 'MMM':
-          dateString += this.monthName().substring(0, 3);
+        case 'dddd':
+          dateString += this.dayName();
           break;
         case 'h':
           dateString += (this.hours % 12) + 1;
@@ -131,57 +230,72 @@ export class Calendar {
     return dateString;
   }
 
-  dateLocal() {
-    return `${this.dayName()}, ${this.date} ${this.monthName()}, ${('0000' + this.year).slice(-4)}`;
-  };
-
-  weekDay() {
+  /**
+   * Returns the day of the week at the current Calendar instance, 0 for Sunday
+   * @returns number the day of the week
+   */
+  weekDay(): number {
     return this.localDate.getUTCDay();
   }
 
-  dayName() {
+  /**
+   * Returns the curren Calendar instance day Name
+   * @returns string Day name
+   */
+  dayName(): string {
     return DAYNAMES[this.localDate.getUTCDay()];
   }
 
-  monthName() {
+  /**
+   * Returns the curren Calendar instance month Name
+   * @returns string Month name
+   */
+  monthName(): string {
     return MONTHNAMES[this.month - 1];
   }
-
-  time(short = false, ampm = false) {
-    return short
-      ? ampm
-        ? `${('00' + (this.hours === 0 ? 12 : this.hours - (this.hours > 12 ? 12 : 0))).slice(-2)}:${('00' + this.minutes).slice(-2)} ${this.hours >= 12 ? 'PM' : 'AM'}`
-        : `${('00' + this.hours).slice(-2)}:${('00' + this.minutes).slice(-2)}`
-      : `${('00' + this.hours).slice(-2)}:${('00' + this.minutes).slice(-2)}:${('00' + this.seconds).slice(-2)}.${('000' + this.milliseconds).slice(-3)}`;
+  /**
+   * Return the curren Calendar instance time in HH:mm(:ss)?() aa)?
+   * @param  {} short=false If true time is HH:mm, else time is HH:mm:ss
+   * @param  {} ampm=false If true adds am/pm marker
+   * @returns string
+   */
+  time(short = false, ampm = false): string {
+    return this.format(`HH:mm${short ? '' : ':ss'}${ampm ? ' aa' : ''}`);
   };
 
-  add(type: number, intValue: number = 0) {
-    switch (type) {
-      case (CONSTS.MILLISECONDS):
+  /**
+   * Adds or substracts the indicated parameter to the current Calendar instance
+   * @param  {PARAM} param Parameter to add or substract
+   * @param  {number} intValue=0 amount to add or substract
+   * @returns Calendar current Calendar instance updated.
+   */
+  add(param: PARAM, intValue: number): Calendar {
+    switch (param) {
+      case (PARAM.MILLISECONDS):
         if (intValue) {
           const tmp = this.milliseconds + intValue;
           intValue = Math.floor(tmp / 1000);
           this.milliseconds = tmp % 1000;
         }
-      case (CONSTS.SECONDS):
+      case (PARAM.SECONDS):
         if (intValue) {
           const tmp = this.seconds + intValue;
           intValue = Math.floor(tmp / 60);
           this.seconds = tmp % 60;
         }
-      case (CONSTS.MINUTES):
+      case (PARAM.MINUTES):
         if (intValue) {
           const tmp = this.minutes + intValue;
           intValue = Math.floor(tmp / 60);
           this.minutes = tmp % 60;
         }
-      case (CONSTS.HOURS):
+      case (PARAM.HOURS):
         if (intValue) {
           const tmp = this.hours + intValue;
           intValue = Math.floor(tmp / 24);
           this.hours = tmp % 24;
         }
-      case (CONSTS.DATE):
+      case (PARAM.DATE):
         if (intValue) {
           let MONTHDAYS = [0, 31, this.isLeap() ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
           let tmp = this.date + intValue;
@@ -205,7 +319,7 @@ export class Calendar {
           this.date = tmp;
           intValue = 0;
         }
-      case (CONSTS.MONTH):
+      case (PARAM.MONTH):
         if (intValue) {
           let tmp = this.month + intValue;
           while (tmp > 12) {
@@ -215,7 +329,7 @@ export class Calendar {
           this.month = tmp;
           intValue = 0;
         }
-      case (CONSTS.YEAR):
+      case (PARAM.YEAR):
         if (intValue) {
           this.year += intValue;
         }
@@ -223,53 +337,13 @@ export class Calendar {
     this.localDate = Calendar.getLocalDate(this.toISOString().substring(0, 23));
     return this;
   }
-
-  static getLocalDate = (date?: number | string) => {
-    const today = date ? new Date(date) : new Date();
-    const less = today.toString().indexOf('GMT-') > -1;
-    return new Date(today.getTime() + (today.getTimezoneOffset() * 60 * 1000 * (less ? -1 : 1)));
+  /**
+   * Clones the current Calendar instance
+   * @returns Calendar instance
+   */
+  clone(): Calendar {
+    return new Calendar(this.year, this.month, this.date, this.hours, this.minutes, this.seconds, this.milliseconds);
   }
-
-  static getInstance = () => {
-    return Calendar.parse();
-  }
-
-  static calendarAtTime = (hours = 0, minutes = 0, seconds = 0, milliseconds = 0) => {
-    const [year = '1', month = '1', date = '1'] = Calendar.getLocalDate().toISOString().split(/[^0-9]/);
-    return new Calendar(parseInt(year), parseInt(month), parseInt(date), hours, minutes, seconds, milliseconds);
-  }
-
-  static parse = (strDate?: string) => {
-    const [year = '1', month = '1', date = '1', hours = '0', minutes = '0', seconds = '0', milliseconds = '0'] = (strDate || Calendar.getLocalDate().toISOString()).split(/[^0-9]/);
-    return new Calendar(parseInt(year), parseInt(month), parseInt(date), parseInt(hours), parseInt(minutes), parseInt(seconds), parseInt(milliseconds));
-  }
-
-  static parseTimeM = (time: string) => {
-    const parts = time.split(/[^0-9APM]+/);
-    let hours = parts[1] ? parseInt(parts[0].replace(/^0*/, '') || '0') : 0;
-    const minutes = parts[1] ? parseInt(parts[1].replace(/^0*/, '') || '0') : 0;
-    if (parts[2]) {
-      hours = parts[2] === 'AM' && hours === 12 ? 0 : parts[2] === 'PM' && hours < 12 ? hours + 12 : hours;
-    }
-    return `${('00' + hours).slice(-2)}:${('00' + minutes).slice(-2)}`
-  }
-
-  static clone = (calendar: Calendar) => {
-    const { year = 1, month = 1, date = 1, hours = 0, minutes = 0, seconds = 0, milliseconds = 0 } = calendar;
-    return new Calendar(year, month, date, hours, minutes, seconds, milliseconds);
-  }
-
-  static toISOString = (calendar?: Calendar) => {
-    return (calendar)
-      ? calendar.toISOString()
-      : Calendar.getInstance().toISOString();
-  }
-
-  static YEAR = CONSTS.YEAR;
-  static MONTH = CONSTS.MONTH;
-  static DATE = CONSTS.DATE;
-  static HOURS = CONSTS.HOURS;
-  static MINUTES = CONSTS.MINUTES;
-  static SECONDS = CONSTS.SECONDS;
-  static MILLISECONDS = CONSTS.MILLISECONDS;
 }
+
+export default Calendar;
