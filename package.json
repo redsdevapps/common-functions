@@ -1,0 +1,24 @@
+{
+  "name": "@redsdev/common-functions",
+  "version": "1.0.0",
+  "description": "Library of common functionalities for web projects like String, Object, Calendar Options, and other functions",
+  "author": "RedsDev",
+  "license": "MIT",
+  "main": "index.js",
+  "module": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/npm/cli.git"
+  },
+  "scripts": {
+    "start": "web-dev-server",
+    "test": "web-test-runner --coverage",
+    "test:watch": "web-test-runner --watch"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@web/dev-server": "^0.1.17",
+    "@web/test-runner": "^0.12.20",
+    "@open-wc/testing": "^2.5.33"
+  }
+}
