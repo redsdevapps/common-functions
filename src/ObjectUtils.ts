@@ -218,3 +218,10 @@ export const includes = (a: any, b: any): boolean => {
     ? Object.keys(a).length >= Object.keys(b).length && Object.keys(b).every(key => deepEquals(a[key], b[key]))
     : (a === b);
 }
+
+/**
+ * Check if an Object has declared a property no mathers which value it has
+ * @param  {any} src Source object to check for property declaration
+ * @param  {string} property Property name
+ */
+export const hasProperty = (src: any, property: string) => Object.keys(src).includes(property);
