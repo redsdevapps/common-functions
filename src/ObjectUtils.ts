@@ -142,7 +142,7 @@ export const reduceObjectProperties = (source: any, prefix: string = ''): object
  */
 export const map = (source: object | Array<any>, fn: (item: any) => any): object | Array<any> => {
   const objIsArray = isArray(source);
-  return source && fn ? Object.entries(source).reduce((result: any, [key, value]) => {
+  return source && isFunction(fn) ? Object.entries(source).reduce((result: any, [key, value]) => {
     const mapValue = fn(value);
     if (isArray(mapValue) || isObject(mapValue)) {
       result[key] = map(mapValue, fn);

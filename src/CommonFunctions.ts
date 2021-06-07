@@ -17,7 +17,7 @@ interface EventDataObject {
  * @param  {string} elementAccessor Element tagName or .cssClassName of source element
  * @returns HTMLElement found in source event, null if no elements matched accessor parameter
  */
-export const getSrcElementFromEvent = (e: Event | EventDataObject, elementAccessor: string): HTMLElement | null => {
+export const getSrcElementFromEvent = (e: Event | EventDataObject, elementAccessor: string): HTMLElement | null | undefined => {
   const byClass = elementAccessor.startsWith('.');
   let element;
   if (e.target) {
@@ -41,7 +41,7 @@ export const getSrcElementFromEvent = (e: Event | EventDataObject, elementAccess
 
   if (!element && (e as EventDataObject).originalTarget) {
     const path: Array<HTMLElement> = [];
-    let parent: HTMLElement = (e as EventDataObject).originalTarget;
+    let parent: HTMLElement | undefined = (e as EventDataObject).originalTarget;
     while (parent && parent !== this) {
       path.push(parent);
       parent = parent.parentNode as HTMLElement;
@@ -111,7 +111,7 @@ export const getNodePosition = (nodeList: Array<Node>, node: Node): number => {
  * @param  {string} parentTag tagName looking for
  * @returns The parent Node matching de tagName, null if no parent tagName found in DOM
  */
-export const getParentNode = (node: Node, parentTag: string): Node => {
+export const getParentNode = (node: Node, parentTag: string): Node | null => {
   let parent = node ? node.parentNode : node;
   const parentTagUpperCase = parentTag.toUpperCase();
   while (parent && parent.nodeName !== parentTagUpperCase && parent.parentNode) {
