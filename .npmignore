@@ -1,6 +1,9 @@
 ## editors
 /.idea
 /.vscode
+.editorconfig
+**config.json
+**config.mjs
 
 ## system files
 .DS_Store
@@ -18,6 +21,7 @@
 # build
 /_site/
 /src/
+/test/
 /out-tsc/
 
 storybook-static
