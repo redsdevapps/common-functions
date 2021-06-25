@@ -9,10 +9,8 @@
  * @returns boolean true if value is instace of Type, false otherwise.
  */
 export const is = (Type: Function, val: any): boolean => {
-  return val != null
-    ? Type !== Object
-      ? val.constructor === Type || val instanceof Type
-      : ['function', 'string', 'number'].includes(`${typeof val}`) && !val.map && !val.getTime
+  return !isNill(val)
+    ? val.constructor === Type || val instanceof Type
     : false;
 }
 
@@ -99,7 +97,7 @@ export const setPathValue = (target: object, path: string, value: any): any => {
     return target;
   }
 
-  let to: any = parent;
+  let to: any = target;
   path.split('.').forEach(
     (attr, index, atts) => {
       if (index === atts.length - 1) {
@@ -113,7 +111,7 @@ export const setPathValue = (target: object, path: string, value: any): any => {
       }
     }
   )
-  return parent;
+  return target;
 };
 
 /**
@@ -224,4 +222,4 @@ export const includes = (a: any, b: any): boolean => {
  * @param  {any} src Source object to check for property declaration
  * @param  {string} property Property name
  */
-export const hasProperty = (src: any, property: string) => Object.keys(src).includes(property);
+export const hasProperty = (src: any, property: string) => Object.keys(src).includes(property) || property in src;
