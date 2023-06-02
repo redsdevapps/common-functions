@@ -8,7 +8,7 @@ enum PARAM {
   MILLISECONDS = 6
 }
 
-const locale = window.localStorage.getItem('locale');
+const locale = typeof window !== 'undefined' ? window.localStorage.getItem('locale') : 'es';
 const DAYNAMES = locale === 'es'
   ? ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado']
   : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
