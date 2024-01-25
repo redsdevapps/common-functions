@@ -1,6 +1,6 @@
 {
   "name": "@redsdev/common-functions",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Library of common functionalities for web projects like String, Object, Calendar Options, and other functions",
   "author": "RedsDev",
   "license": "MIT",
