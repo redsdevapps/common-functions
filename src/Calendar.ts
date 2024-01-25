@@ -110,7 +110,7 @@ class Calendar {
    * @returns Calendar instance
    */
   static getInstance = (): Calendar => {
-    return Calendar.parse(Calendar.getLocalDate().toTimeString());
+    return Calendar.parse(Calendar.getLocalDate().toISOString());
   };
 
   /**
@@ -203,7 +203,7 @@ class Calendar {
    * @returns string formated date
    */
   toISOString(): string {
-    return `${this.dateString()}T${this.time()}Z`;
+    return this.format("yyyy-MM-ddTHH:mm:ss.SSSZ");
   }
 
   /**

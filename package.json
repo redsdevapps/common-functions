@@ -1,11 +1,11 @@
 {
   "name": "@redsdev/common-functions",
-  "version": "1.0.9",
+  "version": "1.0.14",
   "description": "Library of common functionalities for web projects like String, Object, Calendar Options, and other functions",
   "author": "RedsDev",
   "license": "MIT",
-  "main": "index.js",
-  "module": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "type": "module",
   "keywords": [
     "typescript",
