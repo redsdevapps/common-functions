@@ -6,4 +6,4 @@ import * as _Calendar from "./dist/Calendar";
 export const Commons = _Commons;
 export const StringUtils = _StringUtils;
 export const ObjectUtils = _ObjectUtils;
-export const Calendar = _Calendar;
+export const Calendar = _Calendar.default;
