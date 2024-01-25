@@ -110,7 +110,7 @@ class Calendar {
    * @returns Calendar instance
    */
   static getInstance = (): Calendar => {
-    return Calendar.parse(Calendar.getLocalDate().toISOString());
+    return Calendar.parse(Calendar.getLocalDate().toTimeString());
   };
 
   /**
@@ -155,7 +155,7 @@ class Calendar {
       minutes = "0",
       seconds = "0",
       milliseconds = "0",
-    ] = strDate.split(/[^0-9]/);
+    ] = strDate.split(/[^\d]/);
     return new Calendar(
       parseInt(year),
       parseInt(month),
