@@ -160,7 +160,7 @@ export const map = (source: object | Array<any>, fn: (item: any) => any): object
  * @returns string containing injected values
  */
 export const stringProjection = (src: object, value: string, avoidEmptyValues = false): string => {
-  const keys = value.split(/(\$?\{.+?\})/);
+  const keys = value.split(/(\$?\{[^{]+?\})/);
   return keys.reduce((result, key) => {
     const value = /^\$?\{.+?\}$/.test(key) ? getPathValue(src, key.replace(/^\$?\{|\}$/g, '')) : key;
     return result + (!isEmpty(value) || !avoidEmptyValues ? value : key);
